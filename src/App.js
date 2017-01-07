@@ -1,18 +1,39 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import Shape from './components/Shape'
-import './App.css';
+import React from 'react'
+import DevTools from 'mobx-react-devtools'
+import { observer } from 'mobx-react'
+import AppState from './State'
+import GameShape from './components/GameShape'
+import './App.css'
 
-class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <p className="App-intro">
-          <Shape width={180} height={60} data={[10, 16, 5, 22, 3, 11]} />
-        </p>
+function App() {
+  const state = AppState
+
+  // <Shape width={radius} height={radius} points={shapeCoords} />
+  return (
+    <div className="canvas">
+      <GameShape />
+      <div className='controls'>
+        <button onClick={state.decSides}>Remove Side</button>
+        <button onClick={state.incSides}>Add Side</button>
+        <br/>
+        <button onClick={state.scaleDown}>Scale Down</button>
+        <button onClick={state.scaleUp}>Scale Up</button>
+        <br/>
+        <button onClick={state.rotateCC}>Rotate Counter-clockwise</button>
+        <button onClick={state.rotateC}>Rotate Clockwise</button>
+        <br/>
+        <button onClick={state.shiftWarm}>Color Warmer</button>
+        <button onClick={state.shiftCool}>Color Cooler</button>
+        <br/>
+        <button onClick={state.decSkewX}>Skew X Negative</button>
+        <button onClick={state.incSkewX}>Skew X Positive</button>
+        <br/>
+        <button onClick={state.decSkewY}>Skew Y Negative</button>
+        <button onClick={state.incSkewY}>Skew Y Positive</button>
       </div>
-    )
-  }
+      <DevTools />
+    </div>
+  )
 }
 
-export default App
+export default observer(App)

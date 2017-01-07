@@ -1,39 +1,36 @@
 import * as d3 from 'd3'
 import React from 'react'
-import ReactFauxDOM from 'react-faux-dom'
 
-class Shape extends React.Component {
-  static propTypes = {
-    width: React.PropTypes.number,
-    height: React.PropTypes.number,
-    data: React.PropTypes.array,
-    interpolation: React.PropTypes.oneOfType([
-      React.PropTypes.string,
-      React.PropTypes.function
-    ])
-  }
+const Shape = function Shape(props) {
+  const { width, height, points } = props
+  const fill = props.fill || '#000'
+  const skewX = props.skewX || 0
+  const skewY = props.skewY || 0
 
-  render () {
-    const {width, height, data} = this.props
-    const el = d3.select(ReactFauxDOM.createElement('svg'))
+  const x = d3.scaleLinear()
+    .range([0, width])
+    .domain([0, 100])
 
-    const x = d3.scaleLinear()
-      .range([0, width])
-      .domain(d3.extent(data, (d, i) => i))
+  const y = d3.scaleLinear()
+    .range([0, height])
+    .domain([0, 100])
 
-    const y = d3.scaleLinear()
-      .range([height, 0])
-      .domain(d3.extent(data, (d) => d))
+  const pointsString = points.map(d => [x(d.x), y(d.y)].join(',')).join(' ')
 
-    const line = d3.line()
-      .x((d, i) => x(i))
-      .y((d) => y(d))
+  return (
+    <svg style={{ height: '100%', width: '100%' }}>
+      <polygon fill={fill} points={pointsString} transform={`skewX(${skewX}) skewY(${skewY})`} />
+    </svg>
+  )
+}
 
-    el.append('path')
-      .attr('d', line(data))
-
-    return el.node().toReact()
-  }
+Shape.propTypes = {
+  width: React.PropTypes.number,
+  height: React.PropTypes.number,
+  skewX: React.PropTypes.number,
+  skewY: React.PropTypes.number,
+  points: React.PropTypes.array,
+  fill: React.PropTypes.string,
 }
 
 export default Shape
