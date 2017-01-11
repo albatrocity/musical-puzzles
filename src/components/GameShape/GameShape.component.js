@@ -5,26 +5,14 @@ import Shape from '../Shape'
 
 function GameShape() {
   const state = AppState
-  const { sideCount, radius, xCenter, yCenter, fill, rotation, skewX, skewY } = state
-
-  let angle = rotation
-  const angleIncrement = (2 * Math.PI) / sideCount
-
-  const shapeCoords = Array.from(new Array(sideCount)).map(() => {
-    const x = xCenter + (radius * Math.cos(angle))
-    const y = yCenter + (radius * Math.sin(angle))
-    angle += angleIncrement
-    return { x, y }
-  })
+  const { shapePoints, radius, fill } = state
 
   return (
     <Shape
       width={radius}
       height={radius}
-      points={shapeCoords}
+      points={shapePoints}
       fill={fill}
-      skewX={skewX}
-      skewY={skewY}
     />
   )
 }

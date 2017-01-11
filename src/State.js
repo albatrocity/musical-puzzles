@@ -1,11 +1,11 @@
-import { extendObservable } from 'mobx'
-import { scaleSequential } from 'd3'
+import { extendObservable, computed } from 'mobx'
+import { scaleSequential, scaleLog, scaleLinear, extent } from 'd3'
 import { interpolateSpectral } from 'd3-scale-chromatic'
 
 // const colorScale = scaleOrdinal(interpolatePiYG)
 const colorScale = scaleSequential(interpolateSpectral)
 
-console.log(colorScale(0.5));
+console.log(colorScale(0.5))
 class AppState {
   constructor() {
     this.incSides = this.incSides.bind(this)
@@ -35,6 +35,17 @@ class AppState {
       rotation: 0,
       skewX: 0,
       skewY: 0,
+      shapePoints: computed(function () {
+        const angleIncrement = (2 * Math.PI) / this.sideCount
+        let angle = this.rotation
+
+        return Array.from(new Array(this.sideCount)).map(() => {
+          const x = this.xCenter + (this.radius * Math.cos(angle))
+          const y = this.yCenter + (this.radius * Math.sin(angle))
+          angle += angleIncrement
+          return { x, y }
+        })
+      }),
     })
   }
   setShape(points) {
