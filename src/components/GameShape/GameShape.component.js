@@ -1,11 +1,11 @@
 import React from 'react'
 import ReactTransitionGroup from 'react-addons-transition-group'
 import { observer } from 'mobx-react'
-import AppState from '../../State'
+import GameShapeState from '../../GameShapeState'
 import AnimatedShape from '../AnimatedShape'
 
 function GameShape() {
-  const state = AppState
+  const state = GameShapeState
   const { shapePoints, radius, fill } = state
 
   return (

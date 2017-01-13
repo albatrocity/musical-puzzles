@@ -13,3 +13,7 @@
 }
 
 polygon { transition: fill .4s ease; }
+
+.sequencerNote.active {
+  background: yellow;
+}

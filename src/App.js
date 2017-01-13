@@ -1,16 +1,24 @@
 import React from 'react'
 import DevTools from 'mobx-react-devtools'
 import { observer } from 'mobx-react'
-import AppState from './State'
+import GameShapeState from './GameShapeState'
+import SequenceState from './SequenceState'
 import GameShape from './components/GameShape'
+import PuzzleControls from './components/PuzzleControls'
 import './App.css'
 
 function App() {
-  const state = AppState
+  const state = GameShapeState
+  const sequence = SequenceState
+
+  function onChangeTense(e) {
+    state.starify(e.target.value)
+  }
 
   return (
     <div className="canvas">
       <GameShape />
+      <PuzzleControls sequence={sequence}/>
       <div className='controls'>
         <button onClick={state.decSides}>Remove Side</button>
         <button onClick={state.incSides}>Add Side</button>
@@ -29,6 +37,8 @@ function App() {
         <br/>
         <button onClick={state.decSkewY}>Skew Y Negative</button>
         <button onClick={state.incSkewY}>Skew Y Positive</button>
+        <br/>
+        <input type='number' onChange={onChangeTense} />
       </div>
       <DevTools />
     </div>
