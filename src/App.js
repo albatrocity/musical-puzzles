@@ -8,7 +8,6 @@ import './App.css'
 function App() {
   const state = AppState
 
-  // <Shape width={radius} height={radius} points={shapeCoords} />
   return (
     <div className="canvas">
       <GameShape />

@@ -1,19 +1,24 @@
 import React from 'react'
+import ReactTransitionGroup from 'react-addons-transition-group'
 import { observer } from 'mobx-react'
 import AppState from '../../State'
-import Shape from '../Shape'
+import AnimatedShape from '../AnimatedShape'
 
 function GameShape() {
   const state = AppState
   const { shapePoints, radius, fill } = state
 
   return (
-    <Shape
-      width={radius}
-      height={radius}
-      points={shapePoints}
-      fill={fill}
-    />
+    <svg style={{ height: '100%', width: '100%' }}>
+      <ReactTransitionGroup component="g">
+        <AnimatedShape
+          width={radius}
+          height={radius}
+          points={shapePoints}
+          fill={fill}
+        />
+      </ReactTransitionGroup>
+    </svg>
   )
 }
 

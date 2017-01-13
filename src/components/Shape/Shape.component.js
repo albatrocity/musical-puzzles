@@ -33,4 +33,5 @@ Shape.propTypes = {
   fill: React.PropTypes.string,
 }
 
+
 export default Shape
