@@ -1,16 +1,12 @@
-import GameShapeState from './GameShapeState'
 import { extendObservable, computed, action } from 'mobx'
-import { scaleSequential } from 'd3'
-import { interpolateSpectral } from 'd3-scale-chromatic'
-
-// const colorScale = scaleOrdinal(interpolatePiYG)
-const colorScale = scaleSequential(interpolateSpectral)
+import GameShapeState from './GameShapeState'
 
 class SequenceState {
   constructor() {
     extendObservable(this, {
       octave: 4,
       currentStep: 0,
+      appliedTransforms: [],
       initialSequence: [
         '_  e',
         'D4  e',
@@ -22,49 +18,75 @@ class SequenceState {
         'G4  e',
       ],
       userSequence: [
-        '_  e',
-        '_  e',
-        '_  e',
-        '_  e',
-        '_  e',
-        '_  e',
-        '_  e',
-        '_  e',
+        { note: '_', octave: 4, duration: 'e' },
+        { note: '_', octave: 4, duration: 'e' },
+        { note: '_', octave: 4, duration: 'e' },
+        { note: '_', octave: 4, duration: 'e' },
+        { note: '_', octave: 4, duration: 'e' },
+        { note: '_', octave: 4, duration: 'e' },
+        { note: '_', octave: 4, duration: 'e' },
+        { note: '_', octave: 4, duration: 'e' },
       ],
       solutionSequence: [
-        'C4  e',
-        'D4  e',
-        'A4  e',
-        'C4  e',
-        'G4  e',
-        'G4  e',
-        'F4  e',
-        'G4  e',
+        { note: 'C4', octave: 4, duration: 'e' },
+        { note: 'D4', octave: 4, duration: 'e' },
+        { note: 'A4', octave: 4, duration: 'e' },
+        { note: 'C4', octave: 4, duration: 'e' },
+        { note: 'G4', octave: 4, duration: 'e' },
+        { note: 'G4', octave: 4, duration: 'e' },
+        { note: 'F4', octave: 4, duration: 'e' },
+        { note: 'G4', octave: 4, duration: 'e' },
       ],
       nextEmptyIndex: computed(function nextEmptyIndex() {
         return this.userSequence.indexOf(this.userSequence.find(n => (
-          n.split(' ')[0] === '_'
+          n.note === '_'
         )))
       }),
       fullPalette: [
-        { note: 'C', action: GameShapeState.incSides },
-        { note: 'C#', action: GameShapeState.rotateC },
-        { note: 'D', action: GameShapeState.decSides },
-        { note: 'D#', action: GameShapeState.scaleUp },
-        { note: 'E', action: GameShapeState.scaleDown },
-        { note: 'F', action: GameShapeState.rotateCC },
-        { note: 'F#', action: GameShapeState.shiftWarm },
-        { note: 'G', action: GameShapeState.incSkewX },
-        { note: 'G#', action: GameShapeState.decSkewX },
-        { note: 'A', action: GameShapeState.incSkewY },
-        { note: 'A#', action: GameShapeState.decSkewY },
-        { note: 'B', action: GameShapeState.shiftCool },
+        { note: 'C', transform: 'incSides' },
+        { note: 'C#', transform: 'rotateC' },
+        { note: 'D', transform: 'incSides' },
+        { note: 'D#', transform: 'scaleUp' },
+        { note: 'E', transform: 'scaleDown' },
+        { note: 'F', transform: 'rotateCC' },
+        { note: 'F#', transform: 'shiftWarm' },
+        { note: 'G', transform: 'incSkewX' },
+        { note: 'G#', transform: 'decSkewX' },
+        { note: 'A', transform: 'incSkewY' },
+        { note: 'A#', transform: 'decSkewY' },
+        { note: 'B', transform: 'shiftCool' },
       ],
       addNote: action.bound(function addNote(note, i) {
         const index = i || this.nextEmptyIndex
-        const duration = this.solutionSequence[index].split(' ')[1]
-        this.userSequence[index] = `${note.note}${this.octave} ${duration}`
+        if (!this.solutionSequence[index]) { return }
+        const duration = this.solutionSequence[index].duration
+        this.userSequence[index] = {
+          note: note.note,
+          octave: this.octave,
+          duration,
+        }
+        const iterations = index + 1
+        this.appliedTransforms[index] = { transform: note.transform, iterations }
+
+        Array.from(new Array(iterations)).forEach(() => {
+          GameShapeState.transform(note.transform)
+        })
         this.currentStep = index
+      }),
+      removeNote: action.bound(function removeNote(note) {
+        const index = this.userSequence.indexOf(note)
+        const transformation = this.appliedTransforms[index]
+        if (!transformation) { return }
+        Array.from(new Array(transformation.iterations)).forEach(() => {
+          GameShapeState.undoTransform(transformation.transform)
+        })
+        const duration = this.solutionSequence[index].duration
+        this.userSequence[index] = {
+          note: '_',
+          octave: this.octave,
+          duration,
+        }
+        this.appliedTransforms[index] = false
       }),
     })
   }

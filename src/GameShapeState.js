@@ -1,6 +1,7 @@
 import { extendObservable, computed, action } from 'mobx'
 import { scaleSequential } from 'd3'
 import { interpolateSpectral } from 'd3-scale-chromatic'
+import transformations from './lib/transformations'
 
 // const colorScale = scaleOrdinal(interpolatePiYG)
 const colorScale = scaleSequential(interpolateSpectral)
@@ -8,7 +9,7 @@ const colorScale = scaleSequential(interpolateSpectral)
 class AppState {
   constructor() {
     extendObservable(this, {
-      sideCount: 3,
+      sideCount: 4,
       radius: 50,
       xCenter: 500,
       yCenter: 500,
@@ -70,6 +71,14 @@ class AppState {
       }),
       starify: action.bound(function funkify(val) {
         this.starPow = val
+      }),
+      transform: action.bound(function transform(act) {
+        const actionName = transformations[act].transform
+        this[actionName]()
+      }),
+      undoTransform: action.bound(function undoTransform(act) {
+        const actionName = transformations[act].undo
+        this[actionName]()
       }),
       shapePoints: computed(function shapePoints() {
         const angleIncrement = (2 * Math.PI) / this.sideCount

@@ -7,7 +7,6 @@ function NoteControl(props) {
   function onClick() {
     handleClick(props.note)
   }
-  
   return (
     <button onClick={onClick} key={note}>{note}</button>
   )
