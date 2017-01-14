@@ -2,12 +2,15 @@ import * as d3 from 'd3'
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
 
+const defaultDuration = 80
+
 class AnimatedShape extends Component {
   static propTypes = {
     width: React.PropTypes.number,
     height: React.PropTypes.number,
     points: React.PropTypes.array,
     fill: React.PropTypes.string,
+    duration: React.PropTypes.number
   }
   state = {
     points: this.pointsToString(this.props.points),
@@ -16,11 +19,12 @@ class AnimatedShape extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    const duration = this.props.duration || defaultDuration
     if (this.props.points !== nextProps.points) {
       const node = d3.select(ReactDOM.findDOMNode(this))
       this.setState({ className: 'update' })
       const pointsString = this.pointsToString(nextProps.points)
-      node.transition(this.transition)
+      node.transition(this.transition).duration(duration)
         .attr('points', pointsString)
         .on('end', () => this.setState({ points: pointsString }))
     }
@@ -43,9 +47,10 @@ class AnimatedShape extends Component {
 
   componentWillLeave(callback) {
     const node = d3.select(ReactDOM.findDOMNode(this))
+    const duration = this.props.duration || defaultDuration
     this.setState({ className: 'exit' })
 
-    node.transition(this.transition)
+    node.transition(this.transition).duration(duration)
       .attr('y', 60)
       .style('fill-opacity', 1e-6)
       .on('end', () => {
@@ -66,7 +71,7 @@ class AnimatedShape extends Component {
   }
 
   transition = d3.transition()
-      .duration(750)
+      .duration(defaultDuration)
       .ease(d3.easeCubicInOut)
 
   render() {

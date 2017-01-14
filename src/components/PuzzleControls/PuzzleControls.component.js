@@ -3,19 +3,25 @@ import { observer } from 'mobx-react'
 import SequenceState from '../../SequenceState'
 import NotePalette from '../NotePalette'
 import SequenceVisualization from '../SequenceVisualization'
-import AudioPlayer from '../AudioPlayer'
 
 function PuzzleControls() {
   const sequence = SequenceState
 
+  const solvedMarkup = (<h1>You solved it!!!!!</h1>)
+
   function handleAdd(note) {
     sequence.addNote(note)
+  }
+  function playSequence() {
+    SequenceState.play()
   }
 
   return (
     <div className="puzzleControlz">
+    { sequence.solved ? solvedMarkup : null }
       <SequenceVisualization sequence={sequence.userSequence} />
-      <AudioPlayer />
+      <button onClick={playSequence}>Play</button>
+      <button onClick={SequenceState.resetPuzzle}>Reset</button>
       <NotePalette onAdd={handleAdd} />
     </div>
   )

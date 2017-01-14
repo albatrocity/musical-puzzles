@@ -1,15 +1,37 @@
 import React from 'react'
 
 function NoteControl(props) {
-  const { note, action } = props.note
-  const { handleClick, className } = props
+  const { note } = props.note
+  const { handleClick, handleMouseOver, handleMouseOut, className } = props
 
   function onClick() {
     handleClick(props.note)
   }
+  function onOver() {
+    handleMouseOver(props.note)
+  }
+  function onOut() {
+    handleMouseOut(props.note)
+  }
   return (
-    <button className={className} onClick={onClick} key={note}>{note}</button>
+    <button
+      className={className}
+      onMouseOver={handleMouseOver ? onOver : () => {}}
+      onMouseOut={handleMouseOut ? onOut : () => {}}
+      onClick={onClick}
+      key={note}
+    >
+      {note}
+    </button>
   )
+}
+
+NoteControl.propTypes = {
+  handleClick: React.PropTypes.func,
+  handleMouseOver: React.PropTypes.func,
+  handleMouseOut: React.PropTypes.func,
+  className: React.PropTypes.string,
+  note: React.PropTypes.object,
 }
 
 export default NoteControl

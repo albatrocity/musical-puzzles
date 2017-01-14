@@ -3,22 +3,36 @@ import { scaleSequential } from 'd3'
 import { interpolateSpectral } from 'd3-scale-chromatic'
 import transformations from './lib/transformations'
 
-// const colorScale = scaleOrdinal(interpolatePiYG)
 const colorScale = scaleSequential(interpolateSpectral)
 
-class AppState {
+const defaultShape = {
+  sideCount: 4,
+  radius: 50,
+  xCenter: 500,
+  yCenter: 500,
+  colorVal: 0.5,
+  rotation: 0,
+  skewX: 0,
+  skewY: 0,
+  scale: 1,
+  starPow: 1,
+}
+
+class GameShapeState {
   constructor() {
     extendObservable(this, {
-      sideCount: 4,
-      radius: 50,
-      xCenter: 500,
-      yCenter: 500,
-      colorVal: 0.5,
-      fill: colorScale(0.3),
-      rotation: 0,
-      skewX: 0,
-      skewY: 0,
-      scale: 1,
+      sideCount: defaultShape.sideCount,
+      radius: defaultShape.radius,
+      xCenter: defaultShape.xCenter,
+      yCenter: defaultShape.yCenter,
+      colorVal: defaultShape.colorVal,
+      fill: computed(function colorOutput() {
+        return colorScale(this.colorVal)
+      }),
+      rotation: defaultShape.rotation,
+      skewX: defaultShape.skewX,
+      skewY: defaultShape.skewY,
+      scale: defaultShape.scale,
       starPow: 1,
       incSides: action.bound(function incSides() {
         this.sideCount += 1
@@ -43,7 +57,6 @@ class AppState {
       }),
       shiftColor: action.bound(function shiftColor(inc) {
         this.colorVal = this.colorVal + inc
-        this.fill = colorScale(this.colorVal)
       }),
       shiftCool: action.bound(function shiftCool() {
         this.shiftColor(0.05)
@@ -70,7 +83,13 @@ class AppState {
         this.doSkewX(-0.5)
       }),
       starify: action.bound(function funkify(val) {
-        this.starPow = val
+        this.starPow += val
+      }),
+      incStar: action.bound(function incStar() {
+        this.starify(0.1)
+      }),
+      decStar: action.bound(function decStar() {
+        this.starify(-0.1)
       }),
       transform: action.bound(function transform(act) {
         const actionName = transformations[act].transform
@@ -79,6 +98,10 @@ class AppState {
       undoTransform: action.bound(function undoTransform(act) {
         const actionName = transformations[act].undo
         this[actionName]()
+      }),
+      reset: action.bound(function reset(shape = defaultShape) {
+        const attrs = Object.assign({}, defaultShape, shape)
+        Object.keys(attrs).forEach((k) => { this[k] = attrs[k] })
       }),
       shapePoints: computed(function shapePoints() {
         const angleIncrement = (2 * Math.PI) / this.sideCount
@@ -97,4 +120,4 @@ class AppState {
   }
 }
 
-export default new AppState()
+export default new GameShapeState()

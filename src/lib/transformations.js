@@ -47,4 +47,12 @@ export default {
     transform: 'decSkewY',
     undo: 'incSkewY',
   },
+  incStar: {
+    transform: 'incStar',
+    undo: 'decStar',
+  },
+  decStar: {
+    transform: 'decStar',
+    undo: 'incStar',
+  },
 }

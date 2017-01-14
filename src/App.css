@@ -1,8 +1,8 @@
 .canvas {
   text-align: center;
   position: absolute;
-  width: 100%;
-  height: 100%;
+  width: 600px;
+  height: 400px;
 }
 
 .controls {
@@ -12,8 +12,22 @@
   margin-top: 100px;
 }
 
-polygon { transition: fill .4s ease; }
+polygon { transition: fill .2s ease; }
 
 .sequencerNote.active {
   background: yellow;
+}
+
+.debug {
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+button {
+  border: 1px solid #ccc;
+  background: #fafafa;
+  cursor: pointer;
+  border-radius: 3px;
+  margin: 0.3em;
 }

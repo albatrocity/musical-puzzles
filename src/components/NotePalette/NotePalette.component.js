@@ -6,11 +6,19 @@ import NoteControl from '../NoteControl'
 function NotePalette(props) {
   const state = SequenceState
   const { onAdd } = props
-  const { fullPalette } = state
+  const { palette, resetShapeToUserInput, auditionNote } = state
   function handleAdd(note) { onAdd(note) }
+  function onOver(note) { auditionNote(note, state.nextEmptyIndex) }
+  function onOut(note) { resetShapeToUserInput(note, state.nextEmptyIndex) }
 
-  const paletteEls = fullPalette.map(n => (
-    <NoteControl handleClick={handleAdd} key={`shape-${n.note}`} note={n} />
+  const paletteEls = palette.map(n => (
+    <NoteControl
+      handleMouseOver={onOver}
+      handleMouseOut={onOut}
+      handleClick={handleAdd}
+      key={`shape-${n.note}`}
+      note={n}
+    />
   ))
   return (
     <ul>
