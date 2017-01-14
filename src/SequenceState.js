@@ -1,45 +1,35 @@
 import { extendObservable, computed, action } from 'mobx'
+import tinymusic from 'tinymusic'
 import GameShapeState from './GameShapeState'
+
+const blankNote = '_'
 
 class SequenceState {
   constructor() {
     extendObservable(this, {
       octave: 4,
       currentStep: 0,
+      context: new AudioContext(),
+      tempo: 120,
+      load: action.bound(function loadSequence(notes) {
+        this.solutionSequence = notes
+        this.appliedTransforms = Array.from(new Array(notes.length))
+        this.userSequence = notes.map((n) => {
+          const newNote = n
+          if (newNote.given) { return newNote }
+          newNote.note = blankNote
+          return newNote
+        })
+      }),
       appliedTransforms: [],
-      initialSequence: [
-        '_  e',
-        'D4  e',
-        '_  e',
-        '_  e',
-        '_  e',
-        '_  e',
-        'F4  e',
-        'G4  e',
-      ],
-      userSequence: [
-        { note: '_', octave: 4, duration: 'e' },
-        { note: '_', octave: 4, duration: 'e' },
-        { note: '_', octave: 4, duration: 'e' },
-        { note: '_', octave: 4, duration: 'e' },
-        { note: '_', octave: 4, duration: 'e' },
-        { note: '_', octave: 4, duration: 'e' },
-        { note: '_', octave: 4, duration: 'e' },
-        { note: '_', octave: 4, duration: 'e' },
-      ],
-      solutionSequence: [
-        { note: 'C4', octave: 4, duration: 'e' },
-        { note: 'D4', octave: 4, duration: 'e' },
-        { note: 'A4', octave: 4, duration: 'e' },
-        { note: 'C4', octave: 4, duration: 'e' },
-        { note: 'G4', octave: 4, duration: 'e' },
-        { note: 'G4', octave: 4, duration: 'e' },
-        { note: 'F4', octave: 4, duration: 'e' },
-        { note: 'G4', octave: 4, duration: 'e' },
-      ],
+      solutionSequence: [],
+      userSequence: [],
+      userSequenceMusic: computed(function userSequenceMusic() {
+        return this.userSequence.map(n => `${n.note}${n.octave} ${n.duration}`)
+      }),
       nextEmptyIndex: computed(function nextEmptyIndex() {
         return this.userSequence.indexOf(this.userSequence.find(n => (
-          n.note === '_'
+          n.note === blankNote
         )))
       }),
       fullPalette: [
@@ -72,6 +62,7 @@ class SequenceState {
           GameShapeState.transform(note.transform)
         })
         this.currentStep = index
+        this.playNote(note)
       }),
       removeNote: action.bound(function removeNote(note) {
         const index = this.userSequence.indexOf(note)
@@ -82,11 +73,26 @@ class SequenceState {
         })
         const duration = this.solutionSequence[index].duration
         this.userSequence[index] = {
-          note: '_',
+          note: blankNote,
           octave: this.octave,
           duration,
         }
         this.appliedTransforms[index] = false
+      }),
+      play: action.bound(function play() {
+        this.sequencer.play()
+      }),
+      playNote: action.bound(function playNote(note) {
+        const noteString = `${note.note}${this.octave} q`
+        this.sequencer.notes = []
+        this.sequencer.push(noteString)
+        this.sequencer.play()
+      }),
+      sequencer: computed(function sequencer() {
+        const seq = new tinymusic.Sequence(this.context, this.tempo, this.userSequenceMusic)
+        seq.loop = false
+        seq.staccato = 0.5
+        return seq
       }),
     })
   }

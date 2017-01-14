@@ -5,11 +5,14 @@ import GameShapeState from './GameShapeState'
 import SequenceState from './SequenceState'
 import GameShape from './components/GameShape'
 import PuzzleControls from './components/PuzzleControls'
+import exampleSequence from './lib/exampleSequence'
 import './App.css'
 
 function App() {
   const state = GameShapeState
   const sequence = SequenceState
+
+  sequence.load(exampleSequence)
 
   function onChangeTense(e) {
     state.starify(e.target.value)
