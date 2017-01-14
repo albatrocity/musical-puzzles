@@ -2,13 +2,13 @@ import React from 'react'
 
 function NoteControl(props) {
   const { note, action } = props.note
-  const { handleClick } = props
+  const { handleClick, className } = props
 
   function onClick() {
     handleClick(props.note)
   }
   return (
-    <button onClick={onClick} key={note}>{note}</button>
+    <button className={className} onClick={onClick} key={note}>{note}</button>
   )
 }
 

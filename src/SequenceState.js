@@ -4,12 +4,24 @@ import GameShapeState from './GameShapeState'
 
 const blankNote = '_'
 
+const requestAnimFrame = (function () {
+  return window.requestAnimationFrame ||
+    window.webkitRequestAnimationFrame ||
+    window.mozRequestAnimationFrame ||
+    window.oRequestAnimationFrame ||
+    window.msRequestAnimationFrame ||
+    function (callback) {
+      window.setTimeout(callback, 1000 / 60)
+    }
+}())
+
 class SequenceState {
   constructor() {
     extendObservable(this, {
       octave: 4,
       currentStep: 0,
-      context: new AudioContext(),
+      context: window.AudioContext ? new AudioContext() : new window.webkitAudioContext(),
+      currentTime: null,
       tempo: 120,
       load: action.bound(function loadSequence(notes) {
         this.solutionSequence = notes
@@ -23,6 +35,8 @@ class SequenceState {
       }),
       appliedTransforms: [],
       solutionSequence: [],
+      playedSteps: [],
+      noteTimes: [],
       userSequence: [],
       userSequenceMusic: computed(function userSequenceMusic() {
         return this.userSequence.map(n => `${n.note}${n.octave} ${n.duration}`)
@@ -79,8 +93,33 @@ class SequenceState {
         }
         this.appliedTransforms[index] = false
       }),
+      resetShape: action.bound(() => {
+        console.log('reset shape!')
+      }),
       play: action.bound(function play() {
+        requestAnimFrame(this.getCurrentNote)
+        this.playedSteps = []
         this.sequencer.play()
+        this.sequencer.osc.onended = this.resetShape
+        this.currentStep = 0
+        const currentTime = this.context.currentTime
+        let trackedTime = currentTime
+        this.noteTimes = this.sequencer.notes.map((n) => {
+          trackedTime += n.duration / 2
+          return trackedTime
+        })
+      }),
+      getCurrentNote: action.bound(function getCurrentNote() {
+        const currentTime = this.context.currentTime
+        this.noteTimes.forEach((time, i) => {
+          if (time < currentTime) {
+            if (this.playedSteps.indexOf(i) > -1) { return }
+            this.playedSteps.push(i)
+            this.currentStep = i + 1
+          }
+        })
+        if (currentTime > this.noteTimes[this.noteTimes.length - 1]) { return }
+        requestAnimFrame(this.getCurrentNote)
       }),
       playNote: action.bound(function playNote(note) {
         const noteString = `${note.note}${this.octave} q`

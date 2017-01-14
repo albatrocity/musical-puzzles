@@ -5,7 +5,7 @@ import NoteControl from '../NoteControl'
 
 function SequenceVisualization(props) {
   const { sequence } = props
-  const { currentStep } = SequenceState
+  const { currentStep, currentTime } = SequenceState
 
   function handleRemove(note) {
     SequenceState.removeNote(note)
@@ -23,7 +23,12 @@ function SequenceVisualization(props) {
   })
 
   return (
-    <div>{ notes }</div>
+    <div>
+      { currentStep }
+      { currentTime }
+      <br />
+      { notes }
+    </div>
   )
 }
 
