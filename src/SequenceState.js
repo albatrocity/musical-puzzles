@@ -212,7 +212,9 @@ class SequenceState {
       sequencer: computed(function sequencer() {
         const seq = new tinymusic.Sequence(this.context, this.tempo, this.userSequenceMusic)
         seq.loop = false
-        seq.staccato = 0.5
+        seq.staccato = 0.3
+        seq.gain.value = 0.7
+        seq.createCustomWave([-0.8, 1, 0.8, 0.8, -0.8, -0.8, -1])
         return seq
       }),
     })
