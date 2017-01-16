@@ -17,8 +17,8 @@ function PuzzleControls() {
   }
 
   return (
-    <div className="puzzleControlz">
-    { sequence.solved ? solvedMarkup : null }
+    <div className="puzzleControls">
+      { sequence.solved ? solvedMarkup : null }
       <SequenceVisualization sequence={sequence.userSequence} />
       <button onClick={playSequence}>Play</button>
       <button onClick={SequenceState.resetPuzzle}>Reset</button>

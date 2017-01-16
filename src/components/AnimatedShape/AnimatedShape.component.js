@@ -62,11 +62,11 @@ class AnimatedShape extends Component {
   pointsToString(points) {
     const x = d3.scaleLinear()
       .range([0, this.props.width])
-      .domain([0, 100])
+      .domain([0, this.props.width])
 
     const y = d3.scaleLinear()
       .range([0, this.props.height])
-      .domain([0, 100])
+      .domain([0, this.props.height])
     return points.map(d => [x(d.x), y(d.y)].join(',')).join(' ')
   }
 

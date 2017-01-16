@@ -2,7 +2,7 @@ import React from 'react'
 
 function NoteControl(props) {
   const { note } = props.note
-  const { handleClick, handleMouseOver, handleMouseOut, className } = props
+  const { handleClick, handleMouseOver, handleMouseOut, className, disabled } = props
 
   function onClick() {
     handleClick(props.note)
@@ -20,6 +20,7 @@ function NoteControl(props) {
       onMouseOut={handleMouseOut ? onOut : () => {}}
       onClick={onClick}
       key={note}
+      disabled={disabled}
     >
       {note}
     </button>
@@ -32,6 +33,7 @@ NoteControl.propTypes = {
   handleMouseOut: React.PropTypes.func,
   className: React.PropTypes.string,
   note: React.PropTypes.object,
+  disabled: React.PropTypes.bool,
 }
 
 export default NoteControl

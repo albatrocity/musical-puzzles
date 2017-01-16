@@ -25,9 +25,9 @@ export default {
   ],
   startShape: {
     sideCount: 7,
-    radius: 70,
-    xCenter: 400,
-    yCenter: 200,
+    radius: 40,
+    xCenter: 100,
+    yCenter: 100,
     colorVal: 1,
     rotation: 0,
     skewX: 0,

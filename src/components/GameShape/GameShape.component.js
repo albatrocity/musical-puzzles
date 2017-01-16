@@ -11,17 +11,15 @@ function GameShape(props) {
   const { animationDuration } = props
 
   return (
-    <svg style={{ height: '100%', width: '100%' }}>
-      <ReactTransitionGroup component="g">
-        <AnimatedShape
-          width={radius}
-          height={radius}
-          points={shapePoints}
-          fill={fill}
-          duration={animationDuration}
-        />
-      </ReactTransitionGroup>
-    </svg>
+    <ReactTransitionGroup component="g">
+      <AnimatedShape
+        width={radius}
+        height={radius}
+        points={shapePoints}
+        fill={fill}
+        duration={animationDuration}
+      />
+    </ReactTransitionGroup>
   )
 }
 

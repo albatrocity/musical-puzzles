@@ -1,6 +1,7 @@
 import { extendObservable, computed, action, autorun } from 'mobx'
 import tinymusic from 'tinymusic'
 import GameShapeState from './GameShapeState'
+import SolutionShapeState from './SolutionShapeState'
 import defaultPalette from './lib/defaultPalette'
 
 const blankNote = '_'
@@ -47,6 +48,8 @@ class SequenceState {
           this.startShape = null
         }
         GameShapeState.reset(this.startShape)
+        SolutionShapeState.reset(this.startShape)
+        this.applySequence(this.solutionSequence, SolutionShapeState)
         this.resetTransforms()
         this.userSequence = sequence.notes.map((n) => {
           const newNote = n
@@ -78,22 +81,22 @@ class SequenceState {
         )))
       }),
       palette: [],
-      applyStep: action.bound(function applyStep(i, sequence) {
+      applyStep: action.bound(function applyStep(i, sequence, shapeState) {
         if (i > sequence.length - 1) { return }
         const note = this.palette
           .find(n => n.note === sequence[i].note)
         if (!note) { return }
-        this.applyNote(note, i)
+        this.applyNote(note, i, shapeState)
       }),
-      applySequence: action.bound(function applySequence(sequence) {
-        sequence.forEach(s => this.applyStep(sequence.indexOf(s), sequence))
+      applySequence: action.bound(function applySequence(sequence, shapeState) {
+        sequence.forEach(s => this.applyStep(sequence.indexOf(s), sequence, shapeState))
       }),
-      applyNote: action.bound(function applyNote(note, index) {
+      applyNote: action.bound(function applyNote(note, index, shapeState) {
         const iterations = index + 1
         this.appliedTransforms[index] = { transform: note.transform, iterations }
 
         Array.from(new Array(iterations)).forEach(() => {
-          GameShapeState.transform(note.transform)
+          shapeState.transform(note.transform)
         })
       }),
       addNote: action.bound(function addNote(note, i) {
@@ -109,6 +112,7 @@ class SequenceState {
         this.playNote(note)
       }),
       unapplyNote: action.bound(function undoNoteTransform(note, index) {
+        if (this.playing) { return }
         const transformation = this.appliedTransforms[index]
         if (!transformation) { return }
         Array.from(new Array(transformation.iterations)).forEach(() => {
@@ -128,7 +132,7 @@ class SequenceState {
         this.unapplyNote(note, index)
       }),
       auditionNote: action.bound(function auditionNote(note, index) {
-        if (this.isPlaying) { return }
+        if (this.isPlaying) { console.log('nice try'); return }
         const clone = this.userSequence.slice()
         if (!this.solutionSequence[index]) { return }
         const duration = this.solutionSequence[index].duration
@@ -140,12 +144,12 @@ class SequenceState {
         this.resetShape()
         this.currentStep = index
         this.playNote(note, duration)
-        this.applySequence(clone)
+        this.applySequence(clone, GameShapeState)
       }),
       resetShapeToUserInput: action.bound(() => {
+        if (this.playing) { return }
         this.resetShape()
-        // this.isPlaying = false
-        this.applySequence(this.userSequence)
+        this.applySequence(this.userSequence, GameShapeState)
       }),
       resetPuzzle: action.bound(() => {
         GameShapeState.reset(this.startShape)
@@ -173,9 +177,10 @@ class SequenceState {
         this.playedSteps = []
         this.isPlaying = true
         this.sequencer.play()
+        const state = this
         this.sequencer.osc.onended = () => {
-          this.resetShapeToUserInput()
-          this.isPlaying = false
+          state.resetShapeToUserInput()
+          state.isPlaying = false
         }
         this.currentStep = 0
         const currentTime = this.context.currentTime
@@ -198,6 +203,7 @@ class SequenceState {
         requestAnimFrame(this.getCurrentNote)
       }),
       playNote: action.bound(function playNote(note, duration = 'q') {
+        if (this.isPlaying) { return }
         const noteString = `${note.note}${this.octave} ${duration}`
         this.sequencer.notes = []
         this.sequencer.push(noteString)
@@ -215,15 +221,19 @@ class SequenceState {
 
 const state = new SequenceState()
 
-let isSolved = false
+const isSolved = false
 autorun('applySequenceAutorun', () => {
-  if (state.currentStep !== false) { state.applyStep(state.currentStep, state.userSequence) }
+  if (state.currentStep !== false) {
+    state.applyStep(state.currentStep, state.userSequence, GameShapeState)
+  }
 })
 
 autorun('playSolution', () => {
   if (state.solved === true && isSolved !== state.solved) {
-    state.resetTransforms()
-    state.play()
+    setTimeout(() => {
+      state.resetTransforms()
+      state.play()
+    }, 1000)
   }
 })
 

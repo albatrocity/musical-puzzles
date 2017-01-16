@@ -6,10 +6,18 @@ import NoteControl from '../NoteControl'
 function NotePalette(props) {
   const state = SequenceState
   const { onAdd } = props
-  const { palette, resetShapeToUserInput, auditionNote } = state
+  const { palette, resetShapeToUserInput, auditionNote, isPlaying } = state
   function handleAdd(note) { onAdd(note) }
-  function onOver(note) { auditionNote(note, state.nextEmptyIndex) }
-  function onOut(note) { resetShapeToUserInput(note, state.nextEmptyIndex) }
+  function onOver(note) {
+    if (!isPlaying) {
+      auditionNote(note, state.nextEmptyIndex)
+    }
+  }
+  function onOut(note) {
+    if (!isPlaying) {
+      resetShapeToUserInput(note, state.nextEmptyIndex)
+    }
+  }
 
   const paletteEls = palette.map(n => (
     <NoteControl
@@ -18,6 +26,7 @@ function NotePalette(props) {
       handleClick={handleAdd}
       key={`shape-${n.note}`}
       note={n}
+      disabled={state.isPlaying}
     />
   ))
   return (
@@ -25,6 +34,10 @@ function NotePalette(props) {
       { paletteEls }
     </ul>
   )
+}
+
+NotePalette.propTypes = {
+  onAdd: React.PropTypes.func,
 }
 
 export default observer(NotePalette)

@@ -2,36 +2,44 @@ import * as d3 from 'd3'
 import React from 'react'
 
 const Shape = function Shape(props) {
-  const { width, height, points } = props
-  const fill = props.fill || '#000'
-  const skewX = props.skewX || 0
-  const skewY = props.skewY || 0
+  const { width, height, points, fill, strokeColor, strokeWidth, strokeDasharray } = props
 
   const x = d3.scaleLinear()
     .range([0, width])
-    .domain([0, 100])
+    .domain([0, width])
 
   const y = d3.scaleLinear()
     .range([0, height])
-    .domain([0, 100])
+    .domain([0, width])
 
   const pointsString = points.map(d => [x(d.x), y(d.y)].join(',')).join(' ')
 
   return (
-    <svg style={{ height: '100%', width: '100%' }}>
-      <polygon fill={fill} points={pointsString} transform={`skewX(${skewX}) skewY(${skewY})`} />
-    </svg>
+    <polygon
+      fill={fill}
+      points={pointsString}
+      strokeWidth={strokeWidth}
+      stroke={strokeColor}
+      strokeDasharray={strokeDasharray}
+    />
   )
 }
 
 Shape.propTypes = {
   width: React.PropTypes.number,
   height: React.PropTypes.number,
-  skewX: React.PropTypes.number,
-  skewY: React.PropTypes.number,
   points: React.PropTypes.array,
   fill: React.PropTypes.string,
+  strokeColor: React.PropTypes.string,
+  strokeWidth: React.PropTypes.number,
+  strokeDasharray: React.PropTypes.array,
 }
 
+Shape.defaultProps = {
+  strokeWidth: 0,
+  stokeColor: 'transparent',
+  fill: 'transparent',
+  strokeDasharray: [1],
+}
 
 export default Shape
