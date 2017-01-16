@@ -1,13 +1,16 @@
 import React from 'react'
 import { observer } from 'mobx-react'
 import SequenceState from '../../SequenceState'
+import AppState from '../../AppState'
 import NotePalette from '../NotePalette'
 import SequenceVisualization from '../SequenceVisualization'
 
 function PuzzleControls() {
   const sequence = SequenceState
 
-  const solvedMarkup = (<h1>You solved it!!!!!</h1>)
+  function nextPuzzle() {
+    AppState.nextPuzzle()
+  }
 
   function handleAdd(note, i) {
     sequence.addNote(note, i)
@@ -15,6 +18,13 @@ function PuzzleControls() {
   function playSequence() {
     SequenceState.play()
   }
+
+  const solvedMarkup = (
+    <div>
+      <h1>You solved it!!!!!</h1>
+      <button onClick={nextPuzzle}>Next Puzzle</button>
+    </div>
+  )
 
   return (
     <div className="puzzleControls">

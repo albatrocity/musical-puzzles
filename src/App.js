@@ -4,14 +4,11 @@ import { observer } from 'mobx-react'
 import SequenceState from './SequenceState'
 import GameShape from './components/GameShape'
 import PuzzleControls from './components/PuzzleControls'
-import exampleSequence from './lib/exampleSequence'
 import SolutionShape from './components/SolutionShape'
 import './App.css'
 
 function App() {
   const sequence = SequenceState
-
-  sequence.load(exampleSequence)
 
   return (
     <div className="canvas">
