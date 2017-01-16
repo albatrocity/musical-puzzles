@@ -46,7 +46,7 @@ function SequenceVisualization(props) {
     return stepBars
   }, [[]])
 
-  const notes = bars.map((bar) => {
+  const notes = bars.map((bar, barI) => {
     const barNotes = bar.map((n, noteI) => {
       const color = colors[palette.map(s => s.note).indexOf(n.note)]
       const noteIndex = sequence.indexOf(n)
@@ -70,7 +70,7 @@ function SequenceVisualization(props) {
       )
     })
     return (
-      <div className="sequenceBar" key={`${bar}-1`}>
+      <div className="sequenceBar" key={`bar-${barI}`}>
         {barNotes}
       </div>
     )
