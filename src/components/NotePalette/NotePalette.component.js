@@ -6,11 +6,20 @@ import NoteControl from '../NoteControl'
 function NotePalette(props) {
   const state = SequenceState
   const { onAdd } = props
-  const { palette, resetShapeToUserInput, auditionNote, isPlaying } = state
-  function handleAdd(note) { onAdd(note) }
+  const {
+    palette,
+    resetShapeToUserInput,
+    auditionNote,
+    isPlaying,
+    colors,
+    currentStep,
+    auditionedStep,
+    userSequence,
+  } = state
+  function handleAdd(note) { onAdd(note, state.selectedStep) }
   function onOver(note) {
     if (!isPlaying) {
-      auditionNote(note, state.nextEmptyIndex)
+      auditionNote(note, state.selectedStep || state.nextEmptyIndex)
     }
   }
   function onOut(note) {
@@ -19,16 +28,32 @@ function NotePalette(props) {
     }
   }
 
-  const paletteEls = palette.map(n => (
-    <NoteControl
-      handleMouseOver={onOver}
-      handleMouseOut={onOut}
-      handleClick={handleAdd}
-      key={`shape-${n.note}`}
-      note={n}
-      disabled={state.isPlaying}
-    />
-  ))
+  const currentNote = (
+    (currentStep > -1
+      && currentStep < userSequence.length
+      && userSequence[currentStep]
+      && userSequence[currentStep].note) ||
+    (auditionedStep > -1
+      && auditionedStep < userSequence.length
+      && userSequence[auditionedStep]
+      && userSequence[auditionedStep].note)
+  )
+  const paletteEls = palette.map((n, i) => {
+    const isActive = currentNote === n.note
+    return (
+      <NoteControl
+        className={isActive ? 'active sequencerNote' : 'sequencerNote'}
+        handleMouseOver={onOver}
+        handleMouseOut={onOut}
+        handleClick={handleAdd}
+        key={`shape-${n.note}`}
+        note={n}
+        disabled={state.isPlaying}
+        color={colors[i]}
+        showName={state.solved}
+      />
+    )
+  })
   return (
     <ul>
       { paletteEls }

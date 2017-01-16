@@ -15,7 +15,14 @@
 polygon { transition: fill .2s ease; }
 
 .sequencerNote.active {
-  background: yellow;
+  background: rgb(227, 227, 227);
+  transform: scale(1.5);
+}
+
+.sequencerNote.selected {
+  border-color: rgb(0, 170, 242);
+  border-style: dotted;
+  outline: none;
 }
 
 .debug {
@@ -25,9 +32,19 @@ polygon { transition: fill .2s ease; }
 }
 
 button {
-  border: 1px solid #ccc;
-  background: #fafafa;
+  border: 2px solid transparent;
+  outline: none;
+  background: #eaeaea;
   cursor: pointer;
-  border-radius: 3px;
+  border-radius: 1em;
   margin: 0.3em;
+  min-width: 2em;
+  text-align: center;
+  min-height: 2em;
+  -webkit-transition: all 200ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition:         all 200ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+button[disabled] {
+  opacity: 0.6;
 }

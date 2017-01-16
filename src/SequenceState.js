@@ -3,6 +3,8 @@ import tinymusic from 'tinymusic'
 import GameShapeState from './GameShapeState'
 import SolutionShapeState from './SolutionShapeState'
 import defaultPalette from './lib/defaultPalette'
+import { scaleSequential } from 'd3'
+import { interpolateSpectral } from 'd3-scale-chromatic'
 
 const blankNote = '_'
 
@@ -22,6 +24,7 @@ class SequenceState {
     extendObservable(this, {
       octave: 4,
       currentStep: false,
+      auditionedStep: false,
       context: window.AudioContext ? new AudioContext() : new window.webkitAudioContext(),
       currentTime: null,
       tempo: 120,
@@ -29,6 +32,11 @@ class SequenceState {
       stepDuration: computed(() => 1), // maybe base animation speed on tempo
       solved: computed(function solved() {
         return this.correctCount === this.solutionSequence.length
+      }),
+      colors: computed(function colors() {
+        const colorScale = scaleSequential(interpolateSpectral)
+          .domain([0, this.palette.length - 1])
+        return this.palette.map((n, i) => colorScale(i))
       }),
       hint: null,
       startShape: null,
@@ -100,6 +108,8 @@ class SequenceState {
         })
       }),
       addNote: action.bound(function addNote(note, i) {
+        this.selectedStep = false
+        this.auditionedStep = false
         const index = i || this.nextEmptyIndex
         if (!this.solutionSequence[index]) { return }
         const duration = this.solutionSequence[index].duration
@@ -132,7 +142,7 @@ class SequenceState {
         this.unapplyNote(note, index)
       }),
       auditionNote: action.bound(function auditionNote(note, index) {
-        if (this.isPlaying) { console.log('nice try'); return }
+        if (this.isPlaying) { return }
         const clone = this.userSequence.slice()
         if (!this.solutionSequence[index]) { return }
         const duration = this.solutionSequence[index].duration
@@ -154,6 +164,8 @@ class SequenceState {
       resetPuzzle: action.bound(() => {
         GameShapeState.reset(this.startShape)
         this.resetTransforms()
+        this.selectedStep = false
+        this.auditionedStep = false
         this.userSequence = this.loadedSequence.notes.map((n) => {
           const newNote = n
           if (newNote.given) { return newNote }
@@ -171,6 +183,7 @@ class SequenceState {
         this.appliedTransforms = Array.from(new Array(this.solutionSequence.length))
       }),
       play: action.bound(function play() {
+        if (this.isPlaying) return
         this.resetShape()
         this.animationDuration = this.stepDuration
         requestAnimFrame(this.getCurrentNote)
@@ -203,7 +216,7 @@ class SequenceState {
         requestAnimFrame(this.getCurrentNote)
       }),
       playNote: action.bound(function playNote(note, duration = 'q') {
-        if (this.isPlaying) { return }
+        if (this.isPlaying) return
         const noteString = `${note.note}${this.octave} ${duration}`
         this.sequencer.notes = []
         this.sequencer.push(noteString)

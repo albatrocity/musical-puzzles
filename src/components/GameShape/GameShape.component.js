@@ -3,7 +3,6 @@ import ReactTransitionGroup from 'react-addons-transition-group'
 import { observer } from 'mobx-react'
 import GameShapeState from '../../GameShapeState'
 import AnimatedShape from '../AnimatedShape'
-import Shape from '../Shape'
 
 function GameShape(props) {
   const state = GameShapeState

@@ -9,8 +9,8 @@ function PuzzleControls() {
 
   const solvedMarkup = (<h1>You solved it!!!!!</h1>)
 
-  function handleAdd(note) {
-    sequence.addNote(note)
+  function handleAdd(note, i) {
+    sequence.addNote(note, i)
   }
   function playSequence() {
     SequenceState.play()
