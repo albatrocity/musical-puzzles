@@ -28,6 +28,7 @@ class SequenceState {
       context: window.AudioContext ? new AudioContext() : new window.webkitAudioContext(),
       currentTime: null,
       tempo: 120,
+      barLength: 4,
       isPlaying: false,
       stepDuration: computed(() => 1), // maybe base animation speed on tempo
       solved: computed(function solved() {
@@ -45,6 +46,7 @@ class SequenceState {
         this.loadedSequence = sequence
         this.solutionSequence = sequence.notes
         this.hint = sequence.hint
+        this.barLength = sequence.barLength
         if (sequence.palette) {
           this.palette = sequence.palette
         } else {
@@ -72,6 +74,18 @@ class SequenceState {
       playedSteps: [],
       noteTimes: [],
       userSequence: [],
+      spacers: computed(function spacers() {
+        return this.solutionSequence.reduce((mem, s, i) => {
+          const noteDur = mem[mem.length - 1].value + tinymusic.Note.getDuration(s.duration)
+          const durations = mem
+          if (noteDur >= this.barLength) {
+            durations[i] = { isSpacer: true, value: 0 }
+          } else {
+            durations[i] = { isSpacer: false, value: noteDur }
+          }
+          return durations
+        }, [{ isSpacer: false, value: 0 }]).map(x => x.isSpacer)
+      }),
       correctCount: computed(function correctCount() {
         const user = this.userSequence.map(n => n.note)
         const solu = this.solutionSequence.map(n => n.note)

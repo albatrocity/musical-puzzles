@@ -16,12 +16,13 @@ polygon { transition: fill .2s ease; }
 
 .sequencerNote.active {
   background: rgb(227, 227, 227);
+  box-shadow: 0 0 0 2px #fff;
   transform: scale(1.5);
 }
 
 .sequencerNote.selected {
   border-color: rgb(0, 170, 242);
-  border-style: dotted;
+  border-style: dashed;
   outline: none;
 }
 
@@ -29,6 +30,27 @@ polygon { transition: fill .2s ease; }
   position: fixed;
   top: 0;
   left: 0;
+}
+
+.notePalette {
+  margin: 1em auto;
+}
+.userSequence {
+  margin-bottom: 1em;
+}
+.userSequence button {
+  min-width: 4em;
+  min-height: 4em;
+}
+
+.userSequence-step {
+  display: inline-block;
+}
+
+.sequenceBar {
+  display: inline-block;
+  padding-right: 12px;
+  font-size: 0;
 }
 
 button {
@@ -47,4 +69,12 @@ button {
 
 button[disabled] {
   opacity: 0.6;
+}
+
+.sequencerNote.duration-h {
+  width: 8.6em;
+}
+
+.sequencerNote.duration-w {
+  width: 17.8em;
 }

@@ -1,8 +1,9 @@
 export default {
   hint: 'Twinkle twinkle...',
+  barLength: 4,
   notes: [
     { note: 'C', octave: 4, duration: 'q', given: true },
-    { note: 'C', octave: 4, duration: 'q' },
+    { note: 'C', octave: 4, duration: 'q', given: true },
     { note: 'G', octave: 4, duration: 'q' },
     { note: 'G', octave: 4, duration: 'q' },
     { note: 'A', octave: 4, duration: 'q', given: true },

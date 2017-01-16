@@ -55,9 +55,9 @@ function NotePalette(props) {
     )
   })
   return (
-    <ul>
+    <div className="notePalette">
       { paletteEls }
-    </ul>
+    </div>
   )
 }
 

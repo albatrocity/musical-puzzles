@@ -13,6 +13,7 @@ function SequenceVisualization(props) {
     isPlaying,
     auditionedStep,
     selectedStep,
+    spacers,
   } = SequenceState
 
   function handleClick(step) {
@@ -34,27 +35,49 @@ function SequenceVisualization(props) {
     if (t) { return <div key={i}>{t.transform}: {t.iterations}</div> }
     return null
   })
-  const notes = sequence.map((n, i) => {
-    const color = colors[palette.map(s => s.note).indexOf(n.note)]
-    const isActive = currentStep === i || auditionedStep === i || selectedStep === i
-    const isSelected = selectedStep === i
-    const className = `${isActive ? 'active' : ''} ${isSelected ? 'selected' : ''} sequencerNote`
+
+  const bars = spacers.reduce((mem, newBar, i) => {
+    const stepBars = mem
+    const barIndex = stepBars.length - 1
+    stepBars[barIndex].push(sequence[i])
+    if (newBar) {
+      stepBars.push([])
+    }
+    return stepBars
+  }, [[]])
+
+  const notes = bars.map((bar) => {
+    const barNotes = bar.map((n, noteI) => {
+      const color = colors[palette.map(s => s.note).indexOf(n.note)]
+      const noteIndex = sequence.indexOf(n)
+      const isActive = currentStep === noteIndex ||
+        auditionedStep === noteIndex ||
+        selectedStep === noteIndex
+      const isSelected = selectedStep === noteIndex
+      const className = `${isActive ? 'active' : ''} ${isSelected ? 'selected' : ''} sequencerNote duration-${n.duration}`
+      return (
+        <div className="userSequence-step" key={`note-${noteI}`}>
+          <NoteControl
+            className={className}
+            note={n}
+            handleClick={handleClick}
+            handleMouseOver={onOver}
+            handleMouseOut={onOut}
+            showName={SequenceState.solved}
+            color={color}
+          />
+        </div>
+      )
+    })
     return (
-      <NoteControl
-        className={className}
-        note={n}
-        key={`note-${i}`}
-        handleClick={handleClick}
-        handleMouseOver={onOver}
-        handleMouseOut={onOut}
-        showName={SequenceState.solved}
-        color={color}
-      />
+      <div className="sequenceBar" key={`${bar}-1`}>
+        {barNotes}
+      </div>
     )
   })
 
   return (
-    <div>
+    <div className="userSequence">
       <div className="debug">{ applied }</div>
       <br />
       { notes }
