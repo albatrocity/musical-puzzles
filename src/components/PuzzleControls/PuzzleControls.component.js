@@ -18,6 +18,9 @@ function PuzzleControls() {
   function playSequence() {
     SequenceState.play()
   }
+  function stopSequence() {
+    SequenceState.stop()
+  }
 
   const solvedMarkup = (
     <div>
@@ -30,7 +33,11 @@ function PuzzleControls() {
     <div className="puzzleControls">
       { sequence.solved ? solvedMarkup : null }
       <SequenceVisualization sequence={sequence.userSequence} />
-      <button onClick={playSequence}>Play</button>
+      {
+        sequence.isPlaying ?
+          <button onClick={stopSequence}>Stop</button> :
+          <button onClick={playSequence}>Play</button>
+      }
       <button onClick={SequenceState.resetPuzzle}>Reset</button>
       <NotePalette onAdd={handleAdd} />
     </div>

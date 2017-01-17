@@ -14,8 +14,8 @@ function SolutionShape() {
         height={radius}
         points={shapePoints}
         strokeColor={stroke}
-        strokeWidth={2}
-        strokeDasharray={[5, 5]}
+        strokeWidth={1}
+        strokeDasharray={[1, 1]}
         fill="transparent"
       />
     </g>

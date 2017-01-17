@@ -15,6 +15,7 @@ function NotePalette(props) {
     currentStep,
     auditionedStep,
     userSequence,
+    octave,
   } = state
   function handleAdd(note) { onAdd(note, state.selectedStep) }
   function onOver(note) {
@@ -46,7 +47,7 @@ function NotePalette(props) {
         handleMouseOver={onOver}
         handleMouseOut={onOut}
         handleClick={handleAdd}
-        key={`shape-${n.note}`}
+        key={`shape-${n.note}${n.octave || octave}`}
         note={n}
         disabled={state.isPlaying}
         color={colors[i]}

@@ -77,10 +77,22 @@ button[disabled] {
   opacity: 0.6;
 }
 
+.sequencerNote.duration-he {
+  width: 9em;
+}
+
 .sequencerNote.duration-h {
   width: 8.6em;
 }
 
 .sequencerNote.duration-w {
   width: 17.8em;
+}
+
+.sequencerNote.duration-qe {
+  width: 5em;
+}
+
+.sequencerNote.duration-e {
+  min-width: 1.8em;
 }

@@ -44,7 +44,11 @@ class SequenceState {
       loadedSequence: null,
       load: action.bound(function loadSequence(sequence) {
         this.loadedSequence = sequence
-        this.solutionSequence = sequence.notes
+        this.solutionSequence = sequence.notes.map((step) => {
+          const newNote = step
+          newNote.octave = step.octave
+          return newNote
+        })
         this.hint = sequence.hint
         this.barLength = sequence.barLength
         if (sequence.palette) {
@@ -87,8 +91,8 @@ class SequenceState {
         }, [{ isSpacer: false, value: 0 }]).map(x => x.isSpacer)
       }),
       correctCount: computed(function correctCount() {
-        const user = this.userSequence.map(n => n.note)
-        const solu = this.solutionSequence.map(n => n.note)
+        const user = this.userSequence.map(n => `${n.note}${n.octave}`)
+        const solu = this.solutionSequence.map(n => `${n.note}${n.octave}`)
         return user.reduce((mem, n, i) => {
           if (n === solu[i]) { return mem + 1 }
           return mem
@@ -129,7 +133,7 @@ class SequenceState {
         const duration = this.solutionSequence[index].duration
         this.userSequence[index] = {
           note: note.note,
-          octave: this.octave,
+          octave: note.octave || this.octave,
           duration,
         }
         this.resetShapeToUserInput()
@@ -162,7 +166,7 @@ class SequenceState {
         const duration = this.solutionSequence[index].duration
         clone[index] = {
           note: note.note,
-          octave: this.octave,
+          octave: note.octave,
           duration,
         }
         this.resetShape()
@@ -217,7 +221,12 @@ class SequenceState {
           return trackedTime
         })
       }),
+      stop: action.bound(function stop() {
+        this.sequencer.stop()
+        this.isPlaying = false
+      }),
       getCurrentNote: action.bound(function getCurrentNote() {
+        if (!this.isPlaying) return
         const currentTime = this.context.currentTime
         this.noteTimes.forEach((time, i) => {
           if (time < currentTime) {
@@ -231,7 +240,7 @@ class SequenceState {
       }),
       playNote: action.bound(function playNote(note, duration = 'q') {
         if (this.isPlaying) return
-        const noteString = `${note.note}${this.octave} ${duration}`
+        const noteString = `${note.note}${note.octave || this.octave} ${duration}`
         this.sequencer.notes = []
         this.sequencer.push(noteString)
         this.sequencer.play()
