@@ -150,7 +150,7 @@ class SequenceState {
       }),
       removeNote: action.bound(function removeNote(note) {
         const index = this.userSequence.indexOf(note)
-        if (this.solutionSequence[index].given) { return }
+        if (this.solutionSequence[index] && this.solutionSequence[index].given) { return }
         const duration = this.solutionSequence[index].duration
         this.userSequence[index] = {
           note: blankNote,
