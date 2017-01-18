@@ -2,8 +2,7 @@ import { extendObservable, computed, action } from 'mobx'
 import { scaleSequential } from 'd3'
 import { interpolateSpectral } from 'd3-scale-chromatic'
 import transformations from './lib/transformations'
-
-const colorScale = scaleSequential(interpolateSpectral)
+import SequenceState from './SequenceState'
 
 const defaultShape = {
   sideCount: 4,
@@ -26,11 +25,14 @@ class ShapeState {
       xCenter: defaultShape.xCenter,
       yCenter: defaultShape.yCenter,
       colorVal: defaultShape.colorVal,
+      colorScale: computed(() => (
+        scaleSequential(interpolateSpectral).domain([0, SequenceState.palette.length - 1])
+      )),
       fill: computed(function colorOutput() {
-        return colorScale(this.colorVal)
+        return this.colorScale(this.colorVal)
       }),
       stroke: computed(function colorOutput() {
-        return colorScale(this.colorVal)
+        return this.colorScale(this.colorVal)
       }),
       rotation: defaultShape.rotation,
       skewX: defaultShape.skewX,

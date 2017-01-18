@@ -1,6 +1,7 @@
 export default {
   hint: 'Going up!',
   barLength: 8,
+  strategy: 'linear',
   notes: [
     { note: 'C', octave: 4, duration: 'q', given: true },
     { note: 'D', octave: 4, duration: 'q', given: true },
@@ -15,7 +16,7 @@ export default {
     { note: 'C', transform: 'rotateC', octave: 4 },
     { note: 'D', transform: 'incSides', octave: 4 },
     { note: 'E', transform: 'scaleUp', octave: 4 },
-    { note: 'F', transform: 'shiftWarm', octave: 4 },
+    { note: 'F', transform: 'shiftCool', octave: 4 },
     { note: 'G', transform: 'scaleUp', octave: 4 },
     { note: 'A', transform: 'rotateCC', octave: 4 },
     { note: 'B', transform: 'shiftWarm', octave: 4 },
@@ -26,7 +27,7 @@ export default {
     radius: 50,
     xCenter: 100,
     yCenter: 100,
-    colorVal: 1,
+    colorVal: 0.5,
     rotation: 0,
     skewX: 0,
     skewY: 0,

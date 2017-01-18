@@ -78,6 +78,9 @@ class SequenceState {
       playedSteps: [],
       noteTimes: [],
       userSequence: [],
+      strategy: computed(function strategy() {
+        return this.loadedSequence.strategy || 'exponential'
+      }),
       spacers: computed(function spacers() {
         return this.solutionSequence.reduce((mem, s, i) => {
           const noteDur = mem[mem.length - 1].value + tinymusic.Note.getDuration(s.duration)
@@ -121,7 +124,9 @@ class SequenceState {
         sequence.forEach(s => this.applyStep(sequence.indexOf(s), sequence, shapeState))
       }),
       applyNote: action.bound(function applyNote(note, index, shapeState) {
-        const iterations = index + 1
+        let itBase = 0
+        if (this.strategy === 'exponential') { itBase = index }
+        const iterations = itBase + 1
         this.appliedTransforms[index] = { transform: note.transform, iterations }
 
         Array.from(new Array(iterations)).forEach(() => {
