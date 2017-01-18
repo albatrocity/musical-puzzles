@@ -110,7 +110,10 @@ class SequenceState {
       applyStep: action.bound(function applyStep(i, sequence, shapeState) {
         if (i > sequence.length - 1) { return }
         const note = this.palette
-          .find(n => n.note === sequence[i].note)
+          .find(n => (
+            n.note === sequence[i].note &&
+              (n.octave || this.octave) === (sequence[i].octave || this.octave)
+          ))
         if (!note) { return }
         this.applyNote(note, i, shapeState)
       }),

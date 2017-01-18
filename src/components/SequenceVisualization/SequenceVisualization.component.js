@@ -14,6 +14,7 @@ function SequenceVisualization(props) {
     auditionedStep,
     selectedStep,
     spacers,
+    octave,
   } = SequenceState
 
   function handleClick(step) {
@@ -48,7 +49,10 @@ function SequenceVisualization(props) {
 
   const notes = bars.map((bar, barI) => {
     const barNotes = bar.map((n, noteI) => {
-      const color = colors[palette.map(s => s.note).indexOf(n.note)]
+      const color = colors[palette.indexOf(palette.find(s => (
+        s.note === n.note &&
+          (s.octave || octave) === (n.octave || octave)
+      )))]
       const noteIndex = sequence.indexOf(n)
       const isActive = currentStep === noteIndex ||
         auditionedStep === noteIndex ||
