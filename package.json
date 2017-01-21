@@ -1,35 +1,30 @@
 {
-  "name": "musical-puzzles",
-  "version": "0.1.0",
+  "name": "lookup-server",
+  "version": "0.0.1",
   "private": true,
-  "devDependencies": {
-    "babel-eslint": "^7.1.1",
-    "eslint": "^3.12.2",
-    "eslint-config-airbnb": "^13.0.0",
-    "eslint-plugin-import": "^2.2.0",
-    "eslint-plugin-jsx-a11y": "^2.2.3",
-    "eslint-plugin-react": "^6.8.0",
-    "mobx-react-devtools": "^4.2.10",
-    "react-scripts": "0.8.4"
+  "babel": {
+    "presets": [
+      "es2015",
+      "stage-0"
+    ]
   },
   "dependencies": {
-    "axios": "^0.15.3",
-    "d3": "^4.4.0",
-    "d3-scale-chromatic": "^1.1.0",
-    "eslint": "^3.12.2",
-    "eslint-config-airbnb": "^13.0.0",
-    "mobx": "^3.0.0",
-    "mobx-react": "^4.1.0",
-    "mobx-router": "0.0.7",
-    "react": "^15.4.1",
-    "react-addons-transition-group": "^15.4.2",
-    "react-dom": "^15.4.1",
-    "tinymusic": "^1.0.0"
+    "babel-cli": "6.14.0",
+    "babel-core": "6.14.0",
+    "babel-preset-es2015": "6.14.0",
+    "babel-preset-stage-0": "6.5.0",
+    "express": "^4.14.0",
+    "jade": "^1.11.0",
+    "keystone": "^4.0.0-beta.4",
+    "underscore": "^1.8.3"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "babel-node server.js",
+    "client": "babel-node start-client.js",
+    "dev": "echo \"This command has been deprecated. Use 'npm start'\" && exit 1"
+  },
+  "devDependencies": {
+    "concurrently": "^3.1.0"
   }
 }

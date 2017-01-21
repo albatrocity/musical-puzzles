@@ -1,3 +1,4 @@
+import { get } from 'axios'
 import { extendObservable, computed, action, autorun } from 'mobx'
 import { RouterStore } from 'mobx-router'
 import SequenceState from './SequenceState'
@@ -11,9 +12,12 @@ class AppState {
       nextPuzzle: action.bound(function nextPuzzle() {
         this.currentPuzzleId += 1
       }),
-      currentPuzzle: computed(function currentPuzzle() {
-        return puzzles[this.currentPuzzleId]
-      }),
+      currentPuzzle: null,
+      fetchPuzzle: action.bound(function fetchPuzzle(id) {
+        get('http://google.com').then((res) => {
+          this.currentPuzzle = res
+        })
+      })
     })
   }
 }
