@@ -1,9 +1,11 @@
 import { extendObservable, computed, action, autorun } from 'mobx'
+import { RouterStore } from 'mobx-router'
 import SequenceState from './SequenceState'
 import puzzles from './lib/puzzles'
 
 class AppState {
   constructor() {
+    this.router = new RouterStore()
     extendObservable(this, {
       currentPuzzleId: 0,
       nextPuzzle: action.bound(function nextPuzzle() {
@@ -16,10 +18,12 @@ class AppState {
   }
 }
 
-const state = new AppState()
+// const state = new AppState()
 
-autorun('loadSequence', () => {
-  SequenceState.load(state.currentPuzzle)
-})
+// autorun('loadSequence', () => {
+//   if (state.currentPuzzleId !== false) {
+//     SequenceState.load(state.currentPuzzle)
+//   }
+// })
 
-export default state
+export default AppState

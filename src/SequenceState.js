@@ -1,10 +1,10 @@
 import { extendObservable, computed, action, autorun } from 'mobx'
+import { scaleSequential } from 'd3'
+import { interpolateSpectral } from 'd3-scale-chromatic'
 import tinymusic from 'tinymusic'
 import GameShapeState from './GameShapeState'
 import SolutionShapeState from './SolutionShapeState'
 import defaultPalette from './lib/defaultPalette'
-import { scaleSequential } from 'd3'
-import { interpolateSpectral } from 'd3-scale-chromatic'
 
 const blankNote = '_'
 
@@ -79,7 +79,10 @@ class SequenceState {
       noteTimes: [],
       userSequence: [],
       strategy: computed(function strategy() {
-        return this.loadedSequence.strategy || 'exponential'
+        if (this.loadedSequence) {
+          return this.loadedSequence.strategy || 'exponential'
+        }
+        return false
       }),
       spacers: computed(function spacers() {
         return this.solutionSequence.reduce((mem, s, i) => {
@@ -267,20 +270,19 @@ class SequenceState {
 
 const state = new SequenceState()
 
-const isSolved = false
 autorun('applySequenceAutorun', () => {
   if (state.currentStep !== false) {
     state.applyStep(state.currentStep, state.userSequence, GameShapeState)
   }
 })
 
-autorun('playSolution', () => {
-  if (state.solved === true && isSolved !== state.solved) {
-    setTimeout(() => {
-      state.resetTransforms()
-      state.play()
-    }, 1000)
-  }
-})
+// autorun('playSolution', () => {
+//   if (state.solved === true && isSolved !== state.solved) {
+//     setTimeout(() => {
+//       state.resetTransforms()
+//       state.play()
+//     }, 1000)
+//   }
+// })
 
 export default state
