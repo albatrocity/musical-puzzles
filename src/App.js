@@ -1,5 +1,5 @@
 import React from 'react'
-import DevTools from 'mobx-react-devtools'
+// import DevTools from 'mobx-react-devtools'
 import { observer } from 'mobx-react'
 import SequenceState from './SequenceState'
 import GameShape from './components/GameShape'
@@ -22,7 +22,6 @@ function App() {
         null
       }
       <PuzzleControls sequence={sequence} />
-      <DevTools />
     </div>
   )
 }
