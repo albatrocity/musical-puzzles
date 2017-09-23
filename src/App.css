@@ -81,6 +81,10 @@ button[disabled] {
   width: 9em;
 }
 
+.sequencerNote.duration-hqe {
+  width: 12.4em;
+}
+
 .sequencerNote.duration-h {
   width: 8.6em;
 }
